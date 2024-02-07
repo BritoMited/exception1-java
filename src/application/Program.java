@@ -49,22 +49,16 @@ public class Program {
 			dataCheckOut = sc.nextLine();
 
 			localDataCheckOut = LocalDateTime.parse(dataCheckOut, dtf);
-
-			LocalDateTime now = LocalDateTime.now();
-
 			
-			if (localDataCheckIn.isBefore(now) || localDataCheckOut.isBefore(now)) {
-				System.out.println("Erro na reserva: A data de atualização da reserva devem ser datas futuras.");
+			// delegação de serviço para a classe reservation
 			
-			}else if (!localDataCheckOut.isAfter(localDataCheckIn)){
-			          // se a data de checkout nao for depois da data de checkin
-				System.out.println("Erro na sua reserva. O check-out deve ser depois da data de check-in.");
-			
-			}else {
-				reservation.updateDates(localDataCheckIn, localDataCheckOut);
+			String error = reservation.updateDates(localDataCheckIn, localDataCheckOut);
+			if(error != null) {
+				System.out.println("Erro na reserva: " + error);
+			}else {	
 				System.out.println("Reserva: " + reservation);
-			
 			}
+			
 		}
 
 		sc.close();

@@ -47,9 +47,19 @@ public class Reservation {
 		
 	}
 	
-	public void updateDates(LocalDateTime checkIn, LocalDateTime checkOut) {
+	public String updateDates(LocalDateTime checkIn, LocalDateTime checkOut) {
+
+		LocalDateTime now = LocalDateTime.now();
+
+		if (checkIn.isBefore(now) || checkOut.isBefore(now)) {
+			return "A data de atualização da reserva devem ser datas futuras.";
+		}if (!checkOut.isAfter(checkIn)){
+			return "O check-out deve ser depois da data de check-in.";
+		}
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
+		
+		return null; // criterio para msotrar que nao houve nenhum erro
 	}
 	
 	@Override
