@@ -1,22 +1,26 @@
 package model.entities;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import model.exceptions.DomainException;
 
 public class Reservation {
 	
 	private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
 	private Integer roomNumber;
-	private LocalDateTime checkIn;
-	private LocalDateTime checkOut;
+	private LocalDate checkIn;
+	private LocalDate checkOut;
 	
 	public Reservation() {
 		
 	}
 	
-	public Reservation(Integer roomNumber, LocalDateTime checkIn, LocalDateTime checkOut) {
+	public Reservation(Integer roomNumber, LocalDate checkIn, LocalDate checkOut) {
+		if (!checkOut.isAfter(checkIn)){
+			throw new DomainException("O check-out deve ser depois da data de check-in.");
+		}
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
@@ -30,36 +34,32 @@ public class Reservation {
 		this.roomNumber = roomNumber;
 	}
 
-	public LocalDateTime getCheckIn() {
+	public LocalDate getCheckIn() {
 		return checkIn;
 	}
 
-	public LocalDateTime getCheckOut() {
+	public LocalDate getCheckOut() {
 		return checkOut;
 	}
 
 	
-	public long duration() {
-		
-		Duration d1 = Duration.between(checkIn, checkOut);
-		// duration só funciona quando se tem os segundos para calcular
-		return d1.toDays();		
+	public int duration() {
+		return checkOut.compareTo(checkIn);		
 		
 	}
 	
-	public String updateDates(LocalDateTime checkIn, LocalDateTime checkOut) {
+	public void updateDates(LocalDate checkIn, LocalDate checkOut) {
 
-		LocalDateTime now = LocalDateTime.now();
+		LocalDate now = LocalDate.now();
 
 		if (checkIn.isBefore(now) || checkOut.isBefore(now)) {
-			return "A data de atualização da reserva devem ser datas futuras.";
+			throw new DomainException("A data de atualização da reserva devem ser datas futuras.") ;
 		}if (!checkOut.isAfter(checkIn)){
-			return "O check-out deve ser depois da data de check-in.";
-		}
+			throw new DomainException("O check-out deve ser depois da data de check-in.");
+		}             // erro no argumento
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
 		
-		return null; // criterio para msotrar que nao houve nenhum erro
 	}
 	
 	@Override
